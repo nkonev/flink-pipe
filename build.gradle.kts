@@ -1,7 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val flinkVersion: String by project
+val logbackVersion: String by project
+
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.9.22"
     application
 }
 
@@ -13,6 +16,12 @@ repositories {
 }
 
 dependencies {
+    implementation("org.apache.flink:flink-statebackend-rocksdb:$flinkVersion")
+    implementation("org.apache.flink:flink-json:$flinkVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+    implementation("org.apache.flink:flink-table-api-java-bridge:$flinkVersion")
+    implementation("org.apache.flink:flink-table-planner_2.12:$flinkVersion")
 
 }
 
