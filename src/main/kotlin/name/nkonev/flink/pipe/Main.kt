@@ -21,8 +21,11 @@ class Main {
     }
 
     fun runStream() {
+        val configuration = Configuration()
+        configuration.setLong("rest.port", 8888)
+
         val environment = StreamExecutionEnvironment
-            .createLocalEnvironmentWithWebUI(Configuration())
+            .createLocalEnvironmentWithWebUI(configuration)
 
         environment.parallelism = 3
 
