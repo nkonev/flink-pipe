@@ -26,9 +26,6 @@ dependencies {
     implementation("org.apache.flink:flink-table-api-java-bridge:$flinkVersion")
     implementation("org.apache.flink:flink-table-planner_2.12:$flinkVersion")
     implementation("com.ververica:flink-sql-connector-postgres-cdc:$ververicaConnectorVersion")
-
-    implementation("org.apache.commons:commons-configuration2:2.9.0")
-    implementation("commons-beanutils:commons-beanutils:1.9.4")
 }
 
 tasks.test {

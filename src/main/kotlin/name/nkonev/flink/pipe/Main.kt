@@ -1,8 +1,5 @@
 package name.nkonev.flink.pipe
 
-import org.apache.commons.configuration2.ConfigurationMap
-import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder
-import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.time.Time
 import org.apache.flink.configuration.Configuration
@@ -25,14 +22,9 @@ class Main {
     }
 
     fun runStream() {
-        // https://commons.apache.org/proper/commons-configuration/userguide/howto_combinedbuilder.html
-        val apacheCommonsConfig = CombinedConfigurationBuilder()
-            .configure(Parameters().xml().setPath("config.xml"))
-            .configuration
 
-        val apacheCommonsConfigMap = ConfigurationMap(apacheCommonsConfig) as Map<String, String>
-
-        val configuration = Configuration.fromMap(apacheCommonsConfigMap)
+        val config = readConfig("/config.properties")
+        val configuration = Configuration.fromMap(config)
 
         val environment = StreamExecutionEnvironment
             .createLocalEnvironmentWithWebUI(configuration)
@@ -113,6 +105,38 @@ class Main {
                             FROM shipments AS s;
             """.trimIndent())
             .print()
+    }
+
+
+    private fun readConfig(path: String): Map<String, String> {
+        val envPrefix = "flink__"
+
+        val str = javaClass.getResource(path)?.readText(charset = Charsets.UTF_8) ?: ""
+        val lines = str.split("\r?\n|\r".toRegex()).toTypedArray()
+        val valuableLines = lines
+            .filter { it.isNotEmpty() }
+            .filter { it.get(0) != '#' }
+            .filter { it.contains('=') }
+        val propertiesMap =  valuableLines.map {
+            val eqIdx = it.indexOf('=')
+
+            val key = it.substring(0, eqIdx)
+            val value = it.substring(eqIdx + 1)
+
+            key to value
+        }.toMap()
+
+
+        val systemProperties = System.getenv().toMutableMap().filter {
+            it.key.startsWith(envPrefix)
+        }.map {
+            it.key.removePrefix(envPrefix).replace('_', '.') to it.value
+        }
+
+        val resultMap = propertiesMap.toMutableMap()
+        resultMap.putAll(systemProperties)
+
+        return resultMap
     }
 
 }
