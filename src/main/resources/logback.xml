@@ -17,6 +17,11 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
     -->
+
+    <logger name="org.apache.commons.beanutils.FluentPropertyBeanIntrospector" level="warn" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>

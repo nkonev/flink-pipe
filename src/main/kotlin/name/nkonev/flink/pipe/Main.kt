@@ -1,5 +1,6 @@
 package name.nkonev.flink.pipe
 
+import org.apache.commons.configuration2.ConfigurationMap
 import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
@@ -29,9 +30,9 @@ class Main {
             .configure(Parameters().xml().setPath("config.xml"))
             .configuration
 
+        val apacheCommonsConfigMap = ConfigurationMap(apacheCommonsConfig) as Map<String, String>
 
-        val configuration = Configuration()
-        configuration.setLong("rest.port", apacheCommonsConfig.getLong("port"))
+        val configuration = Configuration.fromMap(apacheCommonsConfigMap)
 
         val environment = StreamExecutionEnvironment
             .createLocalEnvironmentWithWebUI(configuration)
