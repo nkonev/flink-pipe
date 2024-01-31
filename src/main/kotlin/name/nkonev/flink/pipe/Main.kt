@@ -80,17 +80,22 @@ class Main {
             .print()
 
 
+        // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
         tableEnvironment
             .executeSql("""
-                            CREATE TABLE print_table WITH ('connector' = 'print')
-                                LIKE shipments (EXCLUDING ALL);
+                            CREATE TABLE print_sink 
+                            WITH (
+                                'connector' = 'print',
+                                'print-identifier' = 'DEBUG_PRINT'
+                            )
+                            LIKE shipments (EXCLUDING ALL);
             """.trimIndent())
             .print()
 
 
         tableEnvironment
             .executeSql("""
-                            INSERT INTO print_table
+                            INSERT INTO print_sink
                             SELECT s.*
                             FROM shipments AS s;
             """.trimIndent())

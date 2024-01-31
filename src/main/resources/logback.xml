@@ -8,11 +8,16 @@
         </layout>
     </appender>
 
+    <!--
     <logger name="io.debezium.connector.base.ChangeEventQueue" level="debug" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <root level="info">
+    <logger name="com.ververica.cdc.debezium.internal.DebeziumChangeFetcher" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    -->
+    <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>
 
