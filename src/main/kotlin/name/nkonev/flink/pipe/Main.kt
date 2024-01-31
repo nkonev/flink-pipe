@@ -25,14 +25,13 @@ class Main {
 
     fun runStream() {
         // https://commons.apache.org/proper/commons-configuration/userguide/howto_combinedbuilder.html
-        val params = Parameters()
-        val builder = CombinedConfigurationBuilder()
-            .configure(params.properties().setPath("config.xml"))
-        val config = builder.configuration
+        val apacheCommonsConfig = CombinedConfigurationBuilder()
+            .configure(Parameters().xml().setPath("config.xml"))
+            .configuration
 
 
         val configuration = Configuration()
-        configuration.setLong("rest.port", config.getLong("port"))
+        configuration.setLong("rest.port", apacheCommonsConfig.getLong("port"))
 
         val environment = StreamExecutionEnvironment
             .createLocalEnvironmentWithWebUI(configuration)
