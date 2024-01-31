@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  postgres:
+    image: debezium/example-postgres:2.5
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:z
+      - ./docker/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:z
+
+volumes:
+  postgres_data:

@@ -55,6 +55,46 @@ class Main {
         tableEnvironment
             .executeSql("SHOW TABLES")
             .print()
+
+        tableEnvironment
+            .executeSql("""
+                            CREATE TABLE shipments (
+                                shipment_id INT,
+                                order_id INT,
+                                origin STRING,
+                                destination STRING,
+                                is_arrived BOOLEAN,
+                                PRIMARY KEY (shipment_id) NOT ENFORCED
+                            ) WITH (
+                                'connector' = 'postgres-cdc',
+                                'hostname' = 'localhost',
+                                'port' = '5432',
+                                'username' = 'postgres',
+                                'password' = 'postgres',
+                                'database-name' = 'postgres',
+                                'schema-name' = 'public',
+                                'table-name' = 'shipments',
+                                'slot.name' = 'flink'
+                            );
+            """.trimIndent())
+            .print()
+
+
+        tableEnvironment
+            .executeSql("""
+                            CREATE TABLE print_table WITH ('connector' = 'print')
+                                LIKE shipments (EXCLUDING ALL);
+            """.trimIndent())
+            .print()
+
+
+        tableEnvironment
+            .executeSql("""
+                            INSERT INTO print_table
+                            SELECT s.*
+                            FROM shipments AS s;
+            """.trimIndent())
+            .print()
     }
 
 }
