@@ -1,5 +1,7 @@
 package name.nkonev.flink.pipe
 
+import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder
+import org.apache.commons.configuration2.builder.fluent.Parameters
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.time.Time
 import org.apache.flink.configuration.Configuration
@@ -7,6 +9,7 @@ import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend
 import org.apache.flink.streaming.api.environment.CheckpointConfig
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment
+
 
 class Main {
     private val checkpointsDir  = "file://${System.getProperty("user.dir")}/checkpoints/"
@@ -21,8 +24,15 @@ class Main {
     }
 
     fun runStream() {
+        // https://commons.apache.org/proper/commons-configuration/userguide/howto_combinedbuilder.html
+        val params = Parameters()
+        val builder = CombinedConfigurationBuilder()
+            .configure(params.properties().setPath("config.xml"))
+        val config = builder.configuration
+
+
         val configuration = Configuration()
-        configuration.setLong("rest.port", 8888)
+        configuration.setLong("rest.port", config.getLong("port"))
 
         val environment = StreamExecutionEnvironment
             .createLocalEnvironmentWithWebUI(configuration)
