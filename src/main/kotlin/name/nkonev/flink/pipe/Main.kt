@@ -44,65 +44,71 @@ class Main {
         // Configure Restart Strategy
         environment.restartStrategy = RestartStrategies.fixedDelayRestart(5, Time.seconds(5))
 
-        val tableEnvironment = StreamTableEnvironment.create(environment)
 
-        // Run some SQL queries to check the existing Catalogs, Databases and Tables
-        tableEnvironment
-            .executeSql("SHOW CATALOGS")
-            .print()
+        environment.use {
 
-        tableEnvironment
-            .executeSql("SHOW DATABASES")
-            .print()
+            val tableEnvironment = StreamTableEnvironment.create(it)
 
-        tableEnvironment
-            .executeSql("SHOW TABLES")
-            .print()
+            // Run some SQL queries to check the existing Catalogs, Databases and Tables
+            tableEnvironment
+                .executeSql("SHOW CATALOGS")
+                .print()
 
-        tableEnvironment
-            .executeSql("""
-                            CREATE TABLE shipments (
-                                shipment_id INT,
-                                order_id INT,
-                                origin STRING,
-                                destination STRING,
-                                is_arrived BOOLEAN,
-                                PRIMARY KEY (shipment_id) NOT ENFORCED
-                            ) WITH (
-                                'connector' = 'postgres-cdc',
-                                'hostname' = '${config.get("postgres.host")}',
-                                'port' = '${config.get("postgres.port")}',
-                                'username' = '${config.get("postgres.username")}',
-                                'password' = '${config.get("postgres.password")}',
-                                'database-name' = '${config.get("postgres.database-name")}',
-                                'schema-name' = 'public',
-                                'table-name' = 'shipments',
-                                'slot.name' = 'flink'
-                            );
-            """.trimIndent())
-            .print()
+            tableEnvironment
+                .executeSql("SHOW DATABASES")
+                .print()
 
+            tableEnvironment
+                .executeSql("SHOW TABLES")
+                .print()
 
-        // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
-        tableEnvironment
-            .executeSql("""
-                            CREATE TABLE print_sink 
-                            WITH (
-                                'connector' = 'print',
-                                'print-identifier' = 'DEBUG_PRINT'
-                            )
-                            LIKE shipments (EXCLUDING ALL);
-            """.trimIndent())
-            .print()
+            tableEnvironment
+                .executeSql("""
+                                CREATE TABLE shipments (
+                                    shipment_id INT,
+                                    order_id INT,
+                                    origin STRING,
+                                    destination STRING,
+                                    is_arrived BOOLEAN,
+                                    PRIMARY KEY (shipment_id) NOT ENFORCED
+                                ) WITH (
+                                    'connector' = 'postgres-cdc',
+                                    'hostname' = '${config.get("postgres.host")}',
+                                    'port' = '${config.get("postgres.port")}',
+                                    'username' = '${config.get("postgres.username")}',
+                                    'password' = '${config.get("postgres.password")}',
+                                    'database-name' = '${config.get("postgres.database-name")}',
+                                    'schema-name' = 'public',
+                                    'table-name' = 'shipments',
+                                    'slot.name' = 'flink'
+                                );
+                """.trimIndent())
+                .print()
 
 
-        tableEnvironment
-            .executeSql("""
-                            INSERT INTO print_sink
-                            SELECT s.*
-                            FROM shipments AS s;
-            """.trimIndent())
-            .print()
+            // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
+            tableEnvironment
+                .executeSql("""
+                                CREATE TABLE print_sink 
+                                WITH (
+                                    'connector' = 'print',
+                                    'print-identifier' = 'DEBUG_PRINT'
+                                )
+                                LIKE shipments (EXCLUDING ALL);
+                """.trimIndent())
+                .print()
+
+
+            tableEnvironment
+                .executeSql("""
+                                INSERT INTO print_sink
+                                SELECT s.*
+                                FROM shipments AS s;
+                """.trimIndent())
+                .print()
+
+        }
+
     }
 
 
