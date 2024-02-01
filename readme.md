@@ -14,3 +14,4 @@ java -jar /home/nkonev/javaWorkspace/flink-pipe/build/libs/flink-pipe-0.1.0-all.
 * [Streaming ETL for MySQL and Postgres with Flink CDC](https://ververica.github.io/flink-cdc-connectors/release-3.0/content/quickstart/mysql-postgres-tutorial.html)
 * [Потоковый захват изменений из PostgreSQL/MySQL с помощью Apache Flink](https://habr.com/ru/companies/neoflex/articles/567930/)
 * [Как использовать Spring в качестве фреймворка для Flink-приложений](https://habr.com/ru/companies/ru_mts/articles/775970/)
+* [debezium/container-images](https://github.com/debezium/container-images/tree/main/examples/postgres)

@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   postgres:
-    image: debezium/example-postgres:2.5
+    image: quay.io/debezium/postgres:16
     ports:
       - "5432:5432"
     environment:
