@@ -1,5 +1,6 @@
 package name.nkonev.flink.pipe
 
+import org.apache.commons.text.StringSubstitutor
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.time.Time
 import org.apache.flink.configuration.Configuration
@@ -7,7 +8,8 @@ import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend
 import org.apache.flink.streaming.api.environment.CheckpointConfig
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment
-import java.util.regex.Pattern
+import java.io.InputStream
+import java.util.*
 
 
 class Main {
@@ -113,55 +115,34 @@ class Main {
 
 
     private fun readConfig(path: String): Map<String, String> {
+        val resource = this.javaClass.getResource(path)
+        val appProps = Properties()
+        val fis = resource.content as InputStream
+        fis.use {
+            appProps.load(it)
+        }
+        val propertiesMap = appProps
+            .filter { it.key != null && it.value != null }
+            .map { it.key.toString() to it.value.toString() }.toMap()
+
         val envPrefix = "flink__"
-
-        val string = javaClass.getResource(path)?.readText(charset = Charsets.UTF_8) ?: ""
-        val lines = string.split("\r?\n|\r".toRegex()).toTypedArray()
-        val valuableLines = lines
-            .filter { it.isNotEmpty() }
-            .filter { it.get(0) != '#' }
-            .filter { it.contains('=') }
-        val propertiesMap =  valuableLines.map {
-            val eqIdx = it.indexOf('=')
-
-            val key = it.substring(0, eqIdx)
-            val value = it.substring(eqIdx + 1)
-
-            key to value
-        }.toMap()
-
-
-        val systemProperties = System.getenv().toMutableMap().filter {
+        val envMap = System.getenv().toMutableMap().filter {
             it.key.startsWith(envPrefix)
         }.map {
             it.key.removePrefix(envPrefix).replace('_', '.') to it.value
-        }
-
-        val resultMap = propertiesMap.toMutableMap()
-        resultMap.putAll(systemProperties)
-
-        val interpolationRegex = Pattern.compile(".*\\{(.*?)\\}.*").toRegex()
-        // process placeholders as of system
-        val changed = resultMap.map {
-            val str = it.value
-            if (str.matches(interpolationRegex)) {
-                val found = interpolationRegex.find(str)
-
-                val group = found?.groups?.get(1)
-                val inBracesKey = group?.value
-                val allRange = group?.range
-                val firstPartEnd = allRange!!.start - 2
-                val secondPartStart = allRange.endInclusive + 2
-                val systemPropVal = System.getProperty(inBracesKey)
-                val replacedString = str.substring(0, firstPartEnd) + systemPropVal + str.substring(secondPartStart)
-
-                return@map it.key to replacedString
-            } else {
-                return@map it.key to it.value
-            }
         }.toMap()
 
-        return changed
+
+        val mergedMap = mutableMapOf<String, String>()
+
+        mergedMap.putAll(propertiesMap)
+        mergedMap.putAll(envMap)
+
+        val resultMap = mergedMap.mapValues {
+            StringSubstitutor.replaceSystemProperties(it.value)
+        }
+
+        return resultMap
     }
 
 }

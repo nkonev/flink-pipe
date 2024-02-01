@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val flinkVersion: String by project
 val logbackVersion: String by project
 val ververicaConnectorVersion: String by project
+val commonsLangVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -26,6 +27,8 @@ dependencies {
     implementation("org.apache.flink:flink-table-api-java-bridge:$flinkVersion")
     implementation("org.apache.flink:flink-table-planner_2.12:$flinkVersion")
     implementation("com.ververica:flink-sql-connector-postgres-cdc:$ververicaConnectorVersion")
+
+    implementation("org.apache.commons:commons-lang3:$commonsLangVersion")
 }
 
 tasks.test {
