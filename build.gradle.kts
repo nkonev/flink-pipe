@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val flinkVersion: String by project
@@ -7,7 +8,7 @@ val commonsLangVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.22"
-    application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "name.nkonev"
@@ -39,13 +40,10 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
-application {
-    mainClass.set("MainKt")
-}
-
-tasks.jar {
-    from(
-        configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
-    )
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+tasks.withType<ShadowJar> {
+    isZip64 = true // needed because lots of files
+    mergeServiceFiles() // required for run flink correctly (https://habr.com/ru/companies/ru_mts/articles/775970/)
+    manifest {
+        attributes["Main-Class"] = "name.nkonev.flink.pipe.Main"
+    }
 }
