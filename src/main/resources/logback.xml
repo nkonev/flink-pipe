@@ -18,7 +18,7 @@
     </logger>
     -->
 
-    <logger name="org.apache.commons.beanutils.FluentPropertyBeanIntrospector" level="warn" additivity="false">
+    <logger name="name.nkonev.flink.pipe" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

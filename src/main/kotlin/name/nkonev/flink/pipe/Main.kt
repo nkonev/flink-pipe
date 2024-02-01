@@ -8,6 +8,7 @@ import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend
 import org.apache.flink.streaming.api.environment.CheckpointConfig
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment
+import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.util.*
 
@@ -17,10 +18,11 @@ class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            println("Hello there!")
             Main().runStream()
         }
     }
+
+    val logger = LoggerFactory.getLogger(this.javaClass)
 
     fun runStream() {
 
@@ -50,19 +52,6 @@ class Main {
         environment.use {
 
             val tableEnvironment = StreamTableEnvironment.create(it)
-
-            // Run some SQL queries to check the existing Catalogs, Databases and Tables
-            tableEnvironment
-                .executeSql("SHOW CATALOGS")
-                .print()
-
-            tableEnvironment
-                .executeSql("SHOW DATABASES")
-                .print()
-
-            tableEnvironment
-                .executeSql("SHOW TABLES")
-                .print()
 
             tableEnvironment
                 .executeSql("""
@@ -100,6 +89,10 @@ class Main {
                 """.trimIndent())
                 .print()
 
+            logger.info("Apache Flink SQL tables:")
+            tableEnvironment
+                .executeSql("SHOW TABLES")
+                .print()
 
             tableEnvironment
                 .executeSql("""
