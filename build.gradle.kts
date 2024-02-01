@@ -1,14 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val flinkVersion: String by project
-val logbackVersion: String by project
-val ververicaConnectorVersion: String by project
-val commonsLangVersion: String by project
-
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.shadow)
 }
 
 group = "name.nkonev"
@@ -19,17 +14,17 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.flink:flink-statebackend-rocksdb:$flinkVersion")
-    implementation("org.apache.flink:flink-json:$flinkVersion")
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation(libs.logback.classic)
+    implementation(libs.flink.statebackend.rocksdb)
+    implementation(libs.flink.json)
+    implementation(libs.flink.clients)
+    implementation(libs.flink.runtime.web)
+    implementation(libs.flink.table.api.java.bridge)
+    implementation(libs.flink.table.planner)
 
-    implementation("org.apache.flink:flink-clients:$flinkVersion")
-    implementation("org.apache.flink:flink-runtime-web:$flinkVersion")
-    implementation("org.apache.flink:flink-table-api-java-bridge:$flinkVersion")
-    implementation("org.apache.flink:flink-table-planner_2.12:$flinkVersion")
-    implementation("com.ververica:flink-sql-connector-postgres-cdc:$ververicaConnectorVersion")
+    implementation(libs.flink.sql.connector.postgres.cdc)
 
-    implementation("org.apache.commons:commons-lang3:$commonsLangVersion")
+    implementation(libs.commons.lang)
 }
 
 tasks.test {
