@@ -72,11 +72,11 @@ class Main {
                                 PRIMARY KEY (shipment_id) NOT ENFORCED
                             ) WITH (
                                 'connector' = 'postgres-cdc',
-                                'hostname' = 'localhost',
-                                'port' = '5432',
-                                'username' = 'postgres',
-                                'password' = 'postgres',
-                                'database-name' = 'postgres',
+                                'hostname' = '${config.get("postgres.host")}',
+                                'port' = '${config.get("postgres.port")}',
+                                'username' = '${config.get("postgres.username")}',
+                                'password' = '${config.get("postgres.password")}',
+                                'database-name' = '${config.get("postgres.database-name")}',
                                 'schema-name' = 'public',
                                 'table-name' = 'shipments',
                                 'slot.name' = 'flink'
