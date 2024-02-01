@@ -19,6 +19,33 @@ Concrete example to replicate data to Elasticsearch 7 derived from [example](htt
 java -jar /home/nkonev/javaWorkspace/flink-pipe/build/libs/flink-pipe-0.1.0-all.jar
 ```
 
+# See PostgreSQL -> Elasticsearch replication
+```
+curl -i http://localhost:9200/_aliases?pretty=true
+
+curl -X GET "http://localhost:9200/enriched_orders/_search?pretty" -H 'Content-Type: application/json' -d'
+{
+    "query": {
+        "match_all": {}
+    }
+}
+'
+```
+
+Then insert some data to PostgreSQL
+```
+docker exec -i -t flink-pipe_postgres_1 psql -U postgres
+
+INSERT INTO shipments VALUES (default,10004,'Moscow','Zuzino',true);
+INSERT INTO shipments VALUES (default,10004,'Moscow','Zyablikovo',false);
+```
+
+```
+curl -X DELETE "http://localhost:9200/enriched_orders?pretty"
+```
+
+and see Elasticsearch index again
+
 # Links
 * [Streaming SQL with Apache Flink: A Gentle Introduction](https://blog.rockthejvm.com/flink-sql-introduction/)
 * [How-to guide: Build Streaming ETL for MySQL and Postgres based on Flink CDC](https://www.ververica.com/blog/how-to-guide-build-streaming-etl-for-mysql-and-postgres-based-on-flink-cdc)

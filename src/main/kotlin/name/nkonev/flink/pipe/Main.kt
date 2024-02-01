@@ -76,18 +76,34 @@ class Main {
                 """.trimIndent())
                 .print()
 
-
-            // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
             tableEnvironment
                 .executeSql("""
-                                CREATE TABLE print_sink 
-                                WITH (
-                                    'connector' = 'print',
-                                    'print-identifier' = 'DEBUG_PRINT'
-                                )
-                                LIKE shipments (EXCLUDING ALL);
+                    CREATE TABLE es_shipments (
+                       shipment_id INT,
+                       order_id INT,
+                       origin STRING,
+                       destination STRING,
+                       is_arrived BOOLEAN,
+                       PRIMARY KEY (shipment_id) NOT ENFORCED
+                     ) WITH (
+                         'connector' = 'elasticsearch-7',
+                         'hosts' = '${config.get("elasticsearch.urls")}',
+                         'index' = '${config.get("elasticsearch.index")}'
+                     );
                 """.trimIndent())
                 .print()
+
+//            // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
+//            tableEnvironment
+//                .executeSql("""
+//                                CREATE TABLE print_sink
+//                                WITH (
+//                                    'connector' = 'print',
+//                                    'print-identifier' = 'DEBUG_PRINT'
+//                                )
+//                                LIKE shipments (EXCLUDING ALL);
+//                """.trimIndent())
+//                .print()
 
             logger.info("Apache Flink SQL tables:")
             tableEnvironment
@@ -96,7 +112,7 @@ class Main {
 
             tableEnvironment
                 .executeSql("""
-                                INSERT INTO print_sink
+                                INSERT INTO es_shipments
                                 SELECT s.*
                                 FROM shipments AS s;
                 """.trimIndent())

@@ -23,6 +23,8 @@ dependencies {
     implementation(libs.flink.table.planner)
 
     implementation(libs.flink.sql.connector.postgres.cdc)
+    implementation(libs.flink.sql.connector.elasticsearch)
+    implementation(libs.log4j.core) // needed for elasticsearch connector
 
     implementation(libs.commons.lang)
 }
