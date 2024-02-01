@@ -7,11 +7,10 @@ import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend
 import org.apache.flink.streaming.api.environment.CheckpointConfig
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment
+import java.util.regex.Pattern
 
 
 class Main {
-    private val checkpointsDir  = "file://${System.getProperty("user.dir")}/checkpoints/"
-    private val rocksDBStateDir = "file://${System.getProperty("user.dir")}/state/rocksdb/"
 
     companion object {
         @JvmStatic
@@ -34,10 +33,9 @@ class Main {
         // Checkpoint Configurations
         environment.enableCheckpointing(5000)
         environment.checkpointConfig.minPauseBetweenCheckpoints = 100
-        environment.checkpointConfig.setCheckpointStorage(checkpointsDir)
 
         val stateBackend = EmbeddedRocksDBStateBackend()
-        stateBackend.setDbStoragePath(rocksDBStateDir)
+        stateBackend.setDbStoragePath(config.get("state.rocksdb.dir"))
         environment.stateBackend = stateBackend
 
         environment.checkpointConfig.externalizedCheckpointCleanup =
@@ -111,8 +109,8 @@ class Main {
     private fun readConfig(path: String): Map<String, String> {
         val envPrefix = "flink__"
 
-        val str = javaClass.getResource(path)?.readText(charset = Charsets.UTF_8) ?: ""
-        val lines = str.split("\r?\n|\r".toRegex()).toTypedArray()
+        val string = javaClass.getResource(path)?.readText(charset = Charsets.UTF_8) ?: ""
+        val lines = string.split("\r?\n|\r".toRegex()).toTypedArray()
         val valuableLines = lines
             .filter { it.isNotEmpty() }
             .filter { it.get(0) != '#' }
@@ -136,7 +134,28 @@ class Main {
         val resultMap = propertiesMap.toMutableMap()
         resultMap.putAll(systemProperties)
 
-        return resultMap
+        val interpolationRegex = Pattern.compile(".*\\{(.*?)\\}.*").toRegex()
+        // process placeholders as of system
+        val changed = resultMap.map {
+            val str = it.value
+            if (str.matches(interpolationRegex)) {
+                val found = interpolationRegex.find(str)
+
+                val group = found?.groups?.get(1)
+                val inBracesKey = group?.value
+                val allRange = group?.range
+                val firstPartEnd = allRange!!.start - 2
+                val secondPartStart = allRange.endInclusive + 2
+                val systemPropVal = System.getProperty(inBracesKey)
+                val replacedString = str.substring(0, firstPartEnd) + systemPropVal + str.substring(secondPartStart)
+
+                return@map it.key to replacedString
+            } else {
+                return@map it.key to it.value
+            }
+        }.toMap()
+
+        return changed
     }
 
 }
