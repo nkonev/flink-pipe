@@ -1,3 +1,14 @@
+# What is it ?
+It is Apache Flink with [Ververica Postgres CDC](https://github.com/ververica/flink-cdc-connectors) built as one fat|uber jar to be launched via `java -jar` as a standalone application.
+
+The purpose is - declaratively (via Flink SQL) replicate data from PostgreSQL to any other datastores.
+
+A docker image of PostgreSQL 16 configured by Debuzium  included to be run via `docker-compose up -d`.
+
+Sample data is placed to the predefined by Postgres Docker `docker-entrypoint-initdb.d` directory.
+
+Concrete example to replicate data to Elasticsearch 7 derived from [example](https://www.ververica.com/blog/how-to-guide-build-streaming-etl-for-mysql-and-postgres-based-on-flink-cdc) is in branch `elastic`.
+
 # Build
 ```
 ./gradlew clean shadowJar
