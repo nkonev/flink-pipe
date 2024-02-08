@@ -19,6 +19,11 @@ Concrete example to replicate data to Elasticsearch 7 derived from [example](htt
 java -jar /home/nkonev/javaWorkspace/flink-pipe/build/libs/flink-pipe-0.1.0-all.jar
 ```
 
+```
+docker exec -it flink-pipe_clickhouse_1 clickhouse-client
+SELECT 'Hello, ClickHouse!'
+```
+
 # Links
 * [Streaming SQL with Apache Flink: A Gentle Introduction](https://blog.rockthejvm.com/flink-sql-introduction/)
 * [How-to guide: Build Streaming ETL for MySQL and Postgres based on Flink CDC](https://www.ververica.com/blog/how-to-guide-build-streaming-etl-for-mysql-and-postgres-based-on-flink-cdc)
