@@ -11,6 +11,7 @@ version = "0.1.0"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -23,6 +24,12 @@ dependencies {
     implementation(libs.flink.table.planner)
 
     implementation(libs.flink.sql.connector.postgres.cdc)
+
+//    implementation("org.apache.flink:flink-connector-jdbc:3.1.1-1.17")
+//    implementation("com.alibaba.ververica:ververica-connector-clickhouse:1.15-vvr-6.0.2-3")
+//    implementation("ru.ivi.opensource:flink-clickhouse-sink:1.4.0")
+    implementation("org.apache.flink:flink-connector-clickhouse:1.17.1-SNAPSHOT")
+    implementation("org.apache.flink:flink-sql-connector-clickhouse:1.17.1-SNAPSHOT")
 
     implementation(libs.commons.lang)
 }

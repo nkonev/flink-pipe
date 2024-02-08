@@ -80,13 +80,21 @@ class Main {
             // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
             tableEnvironment
                 .executeSql("""
-                                CREATE TABLE print_sink 
-                                WITH (
-                                    'connector' = 'print',
-                                    'print-identifier' = 'DEBUG_PRINT'
-                                )
-                                LIKE shipments (EXCLUDING ALL);
-                """.trimIndent())
+                    CREATE TABLE shipments_click (
+                        `shipment_id` INT NOT NULL,
+                        `order_id` INT,
+                        `origin` STRING,
+                        `destination` STRING,
+                        `is_arrived` BOOLEAN,
+                        PRIMARY KEY (`shipment_id`) NOT ENFORCED
+                    ) WITH (
+                        'connector' = 'clickhouse',
+                        'url' = 'clickhouse://127.0.0.1:8123',
+                        'table-name' = 'shipments_ch',
+                        'sink.batch-size' = '500',
+                        'sink.flush-interval' = '1000',
+                        'sink.max-retries' = '3'
+);                """.trimIndent())
                 .print()
 
             logger.info("Apache Flink SQL tables:")
@@ -96,7 +104,7 @@ class Main {
 
             tableEnvironment
                 .executeSql("""
-                                INSERT INTO print_sink
+                                INSERT INTO shipments_click
                                 SELECT s.*
                                 FROM shipments AS s;
                 """.trimIndent())

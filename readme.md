@@ -24,6 +24,14 @@ docker exec -it flink-pipe_clickhouse_1 clickhouse-client
 SELECT 'Hello, ClickHouse!'
 ```
 
+Then insert some data to PostgreSQL
+```
+docker exec -i -t flink-pipe_postgres_1 psql -U postgres
+
+INSERT INTO shipments VALUES (default,10004,'Moscow','Zuzino',true);
+INSERT INTO shipments VALUES (default,10004,'Moscow','Zyablikovo',false), (default,10006,'Arkhangelsk','Leninskii',false);
+```
+
 # Links
 * [Streaming SQL with Apache Flink: A Gentle Introduction](https://blog.rockthejvm.com/flink-sql-introduction/)
 * [How-to guide: Build Streaming ETL for MySQL and Postgres based on Flink CDC](https://www.ververica.com/blog/how-to-guide-build-streaming-etl-for-mysql-and-postgres-based-on-flink-cdc)
