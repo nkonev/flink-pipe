@@ -6,6 +6,8 @@ flink = "1.18.1"
 logback = "1.4.14"
 ververica-connector = "3.0.1"
 commons-lang = "3.14.0"
+flink-connector-jdbc = "3.1.1-1.17"
+postgresql-jdbc = "42.5.1"
 
 [libraries]
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -19,6 +21,9 @@ flink-table-planner = { module = "org.apache.flink:flink-table-planner_2.12", ve
 
 flink-sql-connector-postgres-cdc = { module = "com.ververica:flink-sql-connector-postgres-cdc", version.ref = "ververica-connector" }
 commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }
+
+flink-connector-jdbc = { module = "org.apache.flink:flink-connector-jdbc", version.ref = "flink-connector-jdbc" }
+postgresql-jdbc = { module = "org.postgresql:postgresql", version.ref = "postgresql-jdbc" }
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version = "1.9.22" }

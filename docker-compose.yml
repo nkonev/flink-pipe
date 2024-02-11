@@ -12,5 +12,18 @@ services:
       - postgres_data:/var/lib/postgresql/data:z
       - ./docker/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:z
 
+  postgres-sink:
+    image: postgres:16
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_sink_data:/var/lib/postgresql/data:z
+      - ./docker/postgresql-sink/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:z
+
 volumes:
   postgres_data:
+  postgres_sink_data:

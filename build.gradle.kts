@@ -25,6 +25,10 @@ dependencies {
     implementation(libs.flink.sql.connector.postgres.cdc)
 
     implementation(libs.commons.lang)
+
+    implementation(libs.flink.connector.jdbc)
+    implementation(libs.postgresql.jdbc)
+
 }
 
 tasks.test {

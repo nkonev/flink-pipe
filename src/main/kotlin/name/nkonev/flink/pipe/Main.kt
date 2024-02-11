@@ -77,17 +77,35 @@ class Main {
                 .print()
 
 
-            // https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
-            tableEnvironment
-                .executeSql("""
-                                CREATE TABLE print_sink 
-                                WITH (
-                                    'connector' = 'print',
-                                    'print-identifier' = 'DEBUG_PRINT'
-                                )
-                                LIKE shipments (EXCLUDING ALL);
-                """.trimIndent())
-                .print()
+// https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/print/
+//            tableEnvironment
+//                .executeSql("""
+//                                CREATE TABLE print_sink
+//                                WITH (
+//                                    'connector' = 'print',
+//                                    'print-identifier' = 'DEBUG_PRINT'
+//                                )
+//                                LIKE shipments (EXCLUDING ALL);
+//                """.trimIndent())
+//                .print()
+
+            // https://nightlies.apache.org/flink/flink-docs-release-1.18/docs/connectors/table/jdbc/
+            tableEnvironment.executeSql("""
+                CREATE TABLE shipments_sink (
+                    shipment_id INT,
+                    order_id INT,
+                    origin STRING,
+                    destination STRING,
+                    is_arrived BOOLEAN,
+                    PRIMARY KEY (shipment_id) NOT ENFORCED
+                ) WITH (
+                   'connector' = 'jdbc',
+                   'url' = 'jdbc:postgresql://localhost:15432/postgres',
+                   'username' = 'postgres',
+                   'password' = 'postgres',
+                   'table-name' = 'shipments_sink'
+                );
+            """.trimIndent())
 
             logger.info("Apache Flink SQL tables:")
             tableEnvironment
@@ -96,7 +114,7 @@ class Main {
 
             tableEnvironment
                 .executeSql("""
-                                INSERT INTO print_sink
+                                INSERT INTO shipments_sink
                                 SELECT s.*
                                 FROM shipments AS s;
                 """.trimIndent())
