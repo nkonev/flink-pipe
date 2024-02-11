@@ -22,6 +22,7 @@ java -jar /home/nkonev/javaWorkspace/flink-pipe/build/libs/flink-pipe-0.1.0-all.
 ```
 docker exec -it flink-pipe_clickhouse_1 clickhouse-client
 SELECT 'Hello, ClickHouse!'
+select * from shipments_ch;
 ```
 
 Then insert some data to PostgreSQL
