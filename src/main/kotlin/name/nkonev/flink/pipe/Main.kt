@@ -71,7 +71,9 @@ class Main {
                                     'database-name' = '${config.get("postgres.database-name")}',
                                     'schema-name' = 'public',
                                     'table-name' = 'shipments',
-                                    'slot.name' = 'flink'
+                                    'slot.name' = 'flink',
+                                    'scan.incremental.snapshot.enabled' = 'true',
+                                    'scan.startup.mode' = 'latest-offset'
                                 );
                 """.trimIndent())
                 .print()

@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.flink.table.api.java.bridge)
     implementation(libs.flink.table.planner)
 
+    implementation("org.apache.flink:flink-connector-base:1.18.1")
     implementation(libs.flink.sql.connector.postgres.cdc)
 
     implementation(libs.commons.lang)
