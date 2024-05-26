@@ -4,7 +4,7 @@
 [versions]
 flink = "1.18.1"
 logback = "1.4.14"
-ververica-connector = "3.0.1"
+postgres-connector = "3.1.0"
 commons-lang = "3.14.0"
 
 [libraries]
@@ -17,7 +17,7 @@ flink-runtime-web = { module = "org.apache.flink:flink-runtime-web", version.ref
 flink-table-api-java-bridge = { module = "org.apache.flink:flink-table-api-java-bridge", version.ref = "flink" }
 flink-table-planner = { module = "org.apache.flink:flink-table-planner_2.12", version.ref = "flink" }
 
-flink-sql-connector-postgres-cdc = { module = "com.ververica:flink-sql-connector-postgres-cdc", version.ref = "ververica-connector" }
+flink-sql-connector-postgres-cdc = { module = "org.apache.flink:flink-sql-connector-postgres-cdc", version.ref = "postgres-connector" }
 commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }
 
 [plugins]
